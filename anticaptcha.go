@@ -12,21 +12,39 @@ import (
 var (
 	baseURL      = &url.URL{Host: "api.anti-captcha.com", Scheme: "https", Path: "/"}
 	sendInterval = 10 * time.Second
+	userAgent    = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.1 Safari/537.36"
 )
 
 type Client struct {
 	APIKey string
+	Proxy  Proxy
+}
+
+// Options for proxy
+type Proxy struct {
+	Type      string
+	Address   string
+	Port      string
+	Login     string
+	Password  string
+	UserAgent string
 }
 
 // Method to create the task to process the recaptcha, returns the task_id
-func (c *Client) createTaskRecaptcha(websiteURL string, recaptchaKey string) float64 {
+func (c *Client) createTaskRecaptcha(websiteURL, recaptchaKey string) float64 {
 	// Mount the data to be sent
 	body := map[string]interface{}{
 		"clientKey": c.APIKey,
 		"task": map[string]interface{}{
-			"type":       "NoCaptchaTaskProxyless",
-			"websiteURL": websiteURL,
-			"websiteKey": recaptchaKey,
+			"type":          "NoCaptchaTask",
+			"websiteURL":    websiteURL,
+			"websiteKey":    recaptchaKey,
+			"proxyType":     c.Proxy.Type,
+			"proxyAddress":  c.Proxy.Address,
+			"proxyPort":     c.Proxy.Port,
+			"proxyLogin":    c.Proxy.Login,
+			"proxyPassword": c.Proxy.Password,
+			"proxyAgent":    c.Proxy.UserAgent,
 		},
 	}
 
