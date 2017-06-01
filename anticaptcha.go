@@ -17,14 +17,14 @@ var (
 
 type Client struct {
 	APIKey string
-	Proxy  Proxy
+	Proxy  *Proxy
 }
 
 // Options for proxy
 type Proxy struct {
 	Type      string
 	Address   string
-	Port      string
+	Port      int
 	Login     string
 	Password  string
 	UserAgent string
